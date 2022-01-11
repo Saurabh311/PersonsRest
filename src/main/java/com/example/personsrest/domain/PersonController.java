@@ -16,18 +16,21 @@ public class PersonController {
 
     @GetMapping
     public List<Person> all(){
-        return personService.all()
-                .collect(Collectors.toList());
+        return personService.all();
     }
 
-    /*private static Person toDTO(Person person){
+    private static Person toDTO(Person person){
         Person person1 = new PersonImpl(person.getId(), person.getName(), person.getAge(), person.getCity(), person.getGroups());
         return person1;
-    }*/
+    }
 
     @GetMapping("/{id}")
-    public Person get(@PathVariable String id){
-        personService.get(id);
+    public ResponseEntity<Person> get(@PathVariable String id){
+        try {
+            return ResponseEntity.ok(personService.get(id));
+        } catch (PersonNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -37,8 +40,12 @@ public class PersonController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Person> updatePerson(@PathVariable String id, @RequestBody UpdatePerson updatePerson){
-        return personService.updatePerson(id, updatePerson.getName(), updatePerson.getAge(), updatePerson.getCity());
-
+        try {
+            return ResponseEntity.ok(personService
+                    .updatePerson(id, updatePerson.getName(), updatePerson.getAge(), updatePerson.getCity()));
+        } catch (PersonNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

@@ -14,25 +14,31 @@ public class PersonService {
     PersonRepository personRepository = new PersonRepositoryImpl();
 
 
-    public Stream<Person> all() {
-        //List<Person> allPerson = personRepository.findAll();
-        return Stream.of(new PersonImpl(UUID.randomUUID().toString(), "Saurabh Chauhan", 38, "Delhi", List.of()),
-                new PersonImpl(UUID.randomUUID().toString(), "Mayank", 31, "New Delhi", List.of()),
-                new PersonImpl(UUID.randomUUID().toString(), "Robin", 28, "Malmö", List.of()){
-        });
+    public List<Person> all() {
+        List<Person> personList = personRepository.findAll();
+        return personList;
+
     }
 
-    public Person get(String id) {
-        return null;
+    public Person get(String id) throws PersonNotFoundException{
+        return personRepository.findById(id)
+                .orElseThrow(()-> new PersonNotFoundException(id));
     }
 
     public Person createPerson(String name, int age, String city) {
         Person person = new PersonImpl(UUID.randomUUID().toString(), name, age, city, List.of());
-        return person;
-        //return personRepository.save(person);
+        return personRepository.save(person);
+        //return person;
     }
 
-
+    public Person updatePerson(String id, String name, int age, String city) throws PersonNotFoundException {
+        Person person = personRepository.findById(id)
+                .orElseThrow(()-> new PersonNotFoundException(id));
+        person.setName(name);
+        person.setAge(age);
+        person.setCity(city);
+        return person;
+    }
 
     public void deletePerson(String id) {
         personRepository.delete(id);
