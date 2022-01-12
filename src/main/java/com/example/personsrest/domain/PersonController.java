@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/persons")
+@RequestMapping("/api/persons/")
 @AllArgsConstructor
 public class PersonController {
 
@@ -51,6 +51,15 @@ public class PersonController {
     @DeleteMapping("/{id}")
     public void deletePerson(@PathVariable String id){
         personService.deletePerson(id);
+    }
+
+    @GetMapping("/{id}/link/{remoteId}")
+    public ResponseEntity<Person> link(@PathVariable String id, @PathVariable String remoteId){
+        try {
+            return ResponseEntity.ok(personService.link(id, remoteId));
+        } catch (PersonNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
