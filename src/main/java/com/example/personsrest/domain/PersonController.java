@@ -15,34 +15,29 @@ public class PersonController {
     PersonService personService;
 
     @GetMapping
-    public List<Person> all(){
-        return personService.all();
-    }
-
-    private static Person toDTO(Person person){
-        Person person1 = new PersonImpl(person.getId(), person.getName(), person.getAge(), person.getCity(), person.getGroups());
-        return person1;
+    public List<PersonDTO> all(){
+        return personService.all().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Person> get(@PathVariable String id){
+    public ResponseEntity<PersonDTO> get(@PathVariable String id){
         try {
-            return ResponseEntity.ok(personService.get(id));
+            return ResponseEntity.ok(toDTO(personService.get(id)));
         } catch (PersonNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
-    public Person createPerson (@RequestBody CreatePerson createPerson){
-        return personService.createPerson(createPerson.getName(), createPerson.getAge(), createPerson.getCity());
+    public PersonDTO createPerson (@RequestBody CreatePerson createPerson){
+        return toDTO(personService.createPerson(createPerson.getName(), createPerson.getAge(), createPerson.getCity()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Person> updatePerson(@PathVariable String id, @RequestBody UpdatePerson updatePerson){
+    public ResponseEntity<PersonDTO> updatePerson(@PathVariable String id, @RequestBody UpdatePerson updatePerson){
         try {
-            return ResponseEntity.ok(personService
-                    .updatePerson(id, updatePerson.getName(), updatePerson.getAge(), updatePerson.getCity()));
+            return ResponseEntity.ok(toDTO(personService
+                    .updatePerson(id, updatePerson.getName(), updatePerson.getAge(), updatePerson.getCity())));
         } catch (PersonNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -54,13 +49,16 @@ public class PersonController {
     }
 
     @GetMapping("/{id}/link/{remoteId}")
-    public ResponseEntity<Person> link(@PathVariable String id, @PathVariable String remoteId){
+    public ResponseEntity<PersonDTO> link(@PathVariable String id, @PathVariable String remoteId){
         try {
-            return ResponseEntity.ok(personService.link(id, remoteId));
+            return ResponseEntity.ok(toDTO(personService.link(id, remoteId)));
         } catch (PersonNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
+    private PersonDTO toDTO(Person person) {
+        return new PersonDTO(person.getId(), person.getName(), person.getCity(), person.getAge(), person.getGroups());
+    }
 
 }
