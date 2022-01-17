@@ -31,18 +31,18 @@ public class PersonService {
     }
 
     public Person createPerson(String name, int age, String city) {
-        Person person = new PersonImpl(UUID.randomUUID().toString(), name, age, city, new ArrayList<>());
+        Person person = new PersonImpl(UUID.randomUUID().toString(), name, city, age, new ArrayList<>());
         return personRepository.save(person);
         //return person;
     }
 
     public Person updatePerson(String id, String name, int age, String city) throws PersonNotFoundException {
-        Person person = personRepository.findById(id)
+        Person updatePerson = personRepository.findById(id)
                 .orElseThrow(()-> new PersonNotFoundException(id));
-        person.setName(name);
-        person.setAge(age);
-        person.setCity(city);
-        return person;
+        updatePerson.setName(name);
+        updatePerson.setAge(age);
+        updatePerson.setCity(city);
+        return personRepository.save(updatePerson);
     }
 
     public void deletePerson(String id) {
