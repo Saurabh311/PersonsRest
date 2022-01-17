@@ -31,7 +31,7 @@ public class PersonService {
     }
 
     public Person createPerson(String name, int age, String city) {
-        Person person = new PersonImpl(UUID.randomUUID().toString(), name, city, age, new ArrayList<>());
+        Person person = new PersonImpl(UUID.randomUUID().toString(), name, age, city, new ArrayList<>());
         return personRepository.save(person);
         //return person;
     }
@@ -49,12 +49,32 @@ public class PersonService {
         personRepository.delete(id);
     }
 
-    public Person link(String id, String remoteId) throws PersonNotFoundException{
+    public Person addGroup(String id, String groupName) throws PersonNotFoundException{
         Person person = personRepository.findById(id)
                 .orElseThrow(()-> new PersonNotFoundException(id));
-        String groupName = groupRemote.getNameById(remoteId);
+        String name = groupRemote.createGroup(groupName);
         System.out.println(groupName + " from Service");
-        person.addGroup(groupName);
+        person.addGroup(name);
         return personRepository.save(person);
     }
+
+    public String getGroupName(String groupId) {
+        String groupName;
+        try {
+            groupName = groupRemote.getNameById(groupId);
+        }catch (Exception e){
+            e.toString();
+            return "Invalid group Id";
+        }
+        return groupName;
+    }
+
+    public Person removeGroup(String personId, String groupId)throws PersonNotFoundException{
+        Person person = personRepository.findById(personId)
+                .orElseThrow(()-> new PersonNotFoundException(groupId));
+        person.removeGroup(groupId);
+        return personRepository.save(person);
+    }
+
+
 }

@@ -48,14 +48,25 @@ public class PersonController {
         personService.deletePerson(id);
     }
 
-    @GetMapping("/{id}/link/{remoteId}")
-    public ResponseEntity<PersonDTO> link(@PathVariable String id, @PathVariable String remoteId){
+    @PutMapping("/{id}/addGroup/{groupName}")
+    public ResponseEntity<PersonDTO> addGroup(@PathVariable String id, @PathVariable String groupName){
         try {
-            return ResponseEntity.ok(toDTO(personService.link(id, remoteId)));
+            return ResponseEntity.ok(toDTO(personService.addGroup(id, groupName)));
         } catch (PersonNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/{id}/removeGroup/{groupId}")
+    public ResponseEntity<PersonDTO> removeGroup(@PathVariable String id, @PathVariable String groupId){
+        try {
+            return ResponseEntity.ok(toDTO(personService.removeGroup(id, groupId)));
+        } catch (PersonNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 
     private PersonDTO toDTO(Person person) {
         return new PersonDTO(person.getId(), person.getName(), person.getCity(), person.getAge(), person.getGroups());
