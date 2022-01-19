@@ -1,18 +1,28 @@
 package com.example.personsrest.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PersonImpl implements Person {
     String id;
     String name;
-    int age;
     String city;
+    int age;
     List<String> groups;
+
+    public PersonImpl(String name, String city, int age, List<String> groups) {
+        this.name = name;
+        this.age = age;
+        this.city = city;
+        this.groups = groups;
+
+    }
 
     @Override
     public String getId() {
@@ -62,18 +72,18 @@ public class PersonImpl implements Person {
 
     @Override
     public List<String> getGroups() {
-        return this.groups;
+        return groups;
     }
 
     @Override
     public void addGroup(String groupId) {
-        this.groups.add(groupId);
+        groups.add(groupId);
 
     }
 
     @Override
     public void removeGroup(String groupId) {
-        this.groups.remove(groupId);
+        groups.remove(groupId);
 
     }
 }
