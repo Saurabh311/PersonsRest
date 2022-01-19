@@ -2,12 +2,17 @@ package com.example.personsrest.remote;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-@Component
+import java.util.Objects;
+
 public class GroupRemoteImpl implements GroupRemote{
     WebClient webClient;
 
@@ -19,43 +24,53 @@ public class GroupRemoteImpl implements GroupRemote{
 
     @Override
     public String getNameById(String groupId) {
-        GroupRemoteImpl.GroupDTO groupDTO = webClient.get()
-                .uri("posts/"+groupId)
+        return (webClient
+                .get()
+                .uri("posts/" + groupId)
                 .retrieve()
-                .bodyToMono(GroupDTO.class)
-                .block();
-        String groupName = groupDTO.getTitle();
-        System.out.println(groupName);
-        return groupName;
+                .bodyToMono(Group.class)
+                .block()).getName();
     }
 
 
     @Override
     public String createGroup(String name) {
-        return null;
+         return  (webClient
+                 .post()
+                .uri("posts/")
+                .body(BodyInserters.fromValue(new Group("1001", name, "xyx")))
+                .retrieve()
+                .bodyToMono(Group.class)
+                .single()
+                .block()).getName();
     }
 
     @Override
     public String removeGroup(String name) {
-        return null;
+        return Objects.requireNonNull(webClient
+                .delete()
+                .uri("posts/" + name)
+                .retrieve()
+                .bodyToMono(Group.class)
+                .block()).getName();
     }
 
     @Value
-    static class GroupDTO {
+
+    static class Group {
         String id;
-        String title;
+        String name;
         String body;
-        String userId;
+
 
         @JsonCreator
-        public GroupDTO(@JsonProperty("id") String id,
-                               @JsonProperty("title") String title,
-                               @JsonProperty("body") String body,
-                               @JsonProperty("userId") String userId) {
+        public Group(@JsonProperty("id") String id,
+                               @JsonProperty("name") String name,
+                               @JsonProperty("body") String body) {
             this.id = id;
-            this.title = title;
+            this.name = name;
             this.body = body;
-            this.userId = userId;
+
         }
     }
 }
