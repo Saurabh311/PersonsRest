@@ -1,6 +1,8 @@
 package com.example.personsrest.domain;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.*;
@@ -9,6 +11,10 @@ import java.util.stream.Collectors;
 public class PersonRepositoryImpl implements PersonRepository {
 
     Map<String, Person> persons = new HashMap<>();
+    public PersonRepositoryImpl() {
+        Person person = new PersonImpl("Arne Anka", "Malmö", 19, new ArrayList<>());
+        persons.put(person.getId(), person);
+    }
 
     @Override
     public Optional<Person> findById(String id) {
@@ -17,16 +23,15 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     @Override
     public List<Person> findAll() {
-        return persons.values().stream().collect(Collectors.toList());
-        /*return List.of(new PersonImpl(UUID.randomUUID().toString(), "Saurabh Chauhan", 38, "Delhi", List.of()),
-                new PersonImpl(UUID.randomUUID().toString(), "Mayank", 31, "New Delhi", List.of()),
-                new PersonImpl(UUID.randomUUID().toString(), "Robin", 28, "Malmö", List.of()){
-                }); */
+        return new ArrayList<>(persons.values());
     }
 
     @Override
     public Page<Person> findAllByNameContainingOrCityContaining(String name, String city, Pageable pageable) {
-        return null;
+        return new PageImpl<>(
+                persons.values().stream()
+                        .filter(person -> person.getName().equalsIgnoreCase(name))
+                        .collect(Collectors.toList()));
     }
 
     @Override
