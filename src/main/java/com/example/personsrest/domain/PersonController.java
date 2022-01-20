@@ -1,5 +1,6 @@
 package com.example.personsrest.domain;
 
+import com.example.personsrest.remote.GroupRemoteImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,13 @@ public class PersonController {
     PersonService personService;
 
     @GetMapping
-    public List<PersonDTO> all(@RequestParam(required = false)Map<String, String> search){
-        return !search.isEmpty()
-                ? personService.find(search).stream().map(this::toDTO).collect(Collectors.toList())
-        : personService.all().stream().map(this::toDTO).collect(Collectors.toList());
+    public List<PersonDTO> getAllPersons(@RequestParam(required = false) String search) {
+        if(search == null) {
+            return personService.all().stream().map(this::toDTO).collect(Collectors.toList());
+        } else {
+            return personService.findByNameOrCityContaining(search, 0, 10)
+                    .map(this::toDTO).stream().collect(Collectors.toList());
+        }
     }
 
     @GetMapping("/{id}")
@@ -75,8 +79,7 @@ public class PersonController {
                 person.getName(),
                 person.getCity(),
                 person.getAge(),
-                person.getGroups()
-        );
+                person.getGroups());
     }
 
 }
