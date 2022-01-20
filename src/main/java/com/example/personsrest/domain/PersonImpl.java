@@ -5,10 +5,11 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class PersonImpl implements Person {
     String id;
     String name;
@@ -17,21 +18,21 @@ public class PersonImpl implements Person {
     List<String> groups;
 
     public PersonImpl(String name, String city, int age, List<String> groups) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
-        this.age = age;
         this.city = city;
+        this.age = age;
         this.groups = groups;
-
     }
 
     @Override
     public String getId() {
-        return this.id;
+        return id;
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class PersonImpl implements Person {
 
     @Override
     public int getAge() {
-        return this.age;
+        return age;
     }
 
     @Override

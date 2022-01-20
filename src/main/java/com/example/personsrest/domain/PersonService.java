@@ -3,11 +3,14 @@ package com.example.personsrest.domain;
 import com.example.personsrest.remote.GroupRemote;
 import com.example.personsrest.remote.GroupRemoteImpl;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -20,9 +23,7 @@ public class PersonService {
 
 
     public List<Person> all() {
-        List<Person> personList = personRepository.findAll();
-        return personList;
-
+        return personRepository.findAll();
     }
 
     public Person get(String id) throws PersonNotFoundException{
@@ -30,10 +31,13 @@ public class PersonService {
                 .orElseThrow(()-> new PersonNotFoundException(id));
     }
 
-    public Person createPerson(String name, int age, String city) {
-        Person person = new PersonImpl(UUID.randomUUID().toString(), name, age, city, new ArrayList<>());
-        return personRepository.save(person);
-        //return person;
+    public Person createPerson(CreatePerson createPerson) {
+        return personRepository.save(new PersonImpl(
+                createPerson.getName(),
+                createPerson.getCity(),
+                createPerson.getAge(),
+                new ArrayList<>()));
+
     }
 
     public Person updatePerson(String id, String name, int age, String city) throws PersonNotFoundException {
@@ -53,6 +57,7 @@ public class PersonService {
         Person person = personRepository.findById(id)
                 .orElseThrow(()-> new PersonNotFoundException(id));
         String name = groupRemote.createGroup(groupName);
+        System.out.println(name);
         System.out.println(groupName + " from Service");
         person.addGroup(name);
         return personRepository.save(person);
@@ -74,6 +79,19 @@ public class PersonService {
                 .orElseThrow(()-> new PersonNotFoundException(groupId));
         person.removeGroup(groupId);
         return personRepository.save(person);
+    }
+
+    public Page<Person> find(Map<String, String> search) {
+        PageRequest pageRequest = (search.containsKey("pagesize") && search.containsKey("pagenumber"))
+                ? PageRequest.of(
+                Integer.parseInt(search.get("pagenumber")),
+                Integer.parseInt(search.get("pagesize")))
+                : PageRequest.of(0, 10);
+
+        return personRepository.findAllByNameContainingOrCityContaining(
+                search.get("search"),
+                search.get("search"),
+                pageRequest);
     }
 
 

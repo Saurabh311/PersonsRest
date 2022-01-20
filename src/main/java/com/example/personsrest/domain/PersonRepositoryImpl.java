@@ -12,7 +12,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     Map<String, Person> persons = new HashMap<>();
     public PersonRepositoryImpl() {
-        Person person = new PersonImpl("Arne Anka", "Malmö", 19, new ArrayList<>());
+        Person person = new PersonImpl(UUID.randomUUID().toString(),"Arne Anka", "Malmö", 19, new ArrayList<>());
         persons.put(person.getId(), person);
     }
 
@@ -41,7 +41,8 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     @Override
     public Person save(Person person) {
-        return persons.put(person.getId(), person);
+        persons.put(person.getId(), person);
+        return person;
     }
 
     @Override

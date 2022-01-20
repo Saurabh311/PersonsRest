@@ -5,18 +5,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/persons/")
+@RequestMapping("/api/persons")
 @AllArgsConstructor
 public class PersonController {
 
     PersonService personService;
 
     @GetMapping
-    public List<PersonDTO> all(){
-        return personService.all().stream().map(this::toDTO).collect(Collectors.toList());
+    public List<PersonDTO> all(@RequestParam(required = false)Map<String, String> search){
+        return !search.isEmpty()
+                ? personService.find(search).stream().map(this::toDTO).collect(Collectors.toList())
+        : personService.all().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
@@ -30,7 +33,7 @@ public class PersonController {
 
     @PostMapping
     public PersonDTO createPerson (@RequestBody CreatePerson createPerson){
-        return toDTO(personService.createPerson(createPerson.getName(), createPerson.getAge(), createPerson.getCity()));
+        return toDTO(personService.createPerson(createPerson));
     }
 
     @PutMapping("/{id}")
@@ -66,10 +69,14 @@ public class PersonController {
         }
     }
 
-
-
     private PersonDTO toDTO(Person person) {
-        return new PersonDTO(person.getId(), person.getName(), person.getCity(), person.getAge(), person.getGroups());
+        return new PersonDTO(
+                person.getId(),
+                person.getName(),
+                person.getCity(),
+                person.getAge(),
+                person.getGroups()
+        );
     }
 
 }
