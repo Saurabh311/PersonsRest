@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 public class PersonRepositoryImpl implements PersonRepository {
 
     Map<String, Person> persons = new HashMap<>();
+
     public PersonRepositoryImpl() {
-        Person person = new PersonImpl(UUID.randomUUID().toString(),"Arne Anka", "Malmö", 19, new ArrayList<>());
+        Person person = new PersonImpl(UUID.randomUUID().toString(), "Arne Anka", "Malmö", 19, new ArrayList<>());
         persons.put(person.getId(), person);
     }
 

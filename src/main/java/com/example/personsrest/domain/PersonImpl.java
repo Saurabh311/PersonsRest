@@ -2,8 +2,6 @@ package com.example.personsrest.domain;
 
 import lombok.*;
 
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,7 +45,7 @@ public class PersonImpl implements Person {
 
     @Override
     public void setAge(int age) {
-        this.age=age;
+        this.age = age;
     }
 
     @Override
@@ -57,7 +55,7 @@ public class PersonImpl implements Person {
 
     @Override
     public void setCity(String city) {
-        this.city=city;
+        this.city = city;
 
     }
 

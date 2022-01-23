@@ -1,12 +1,10 @@
 package com.example.personsrest.domain;
 
-import com.example.personsrest.remote.GroupRemoteImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,7 +16,7 @@ public class PersonController {
 
     @GetMapping
     public List<PersonDTO> getAllPersons(@RequestParam(required = false) String search) {
-        if(search == null) {
+        if (search == null) {
             return personService.all().stream().map(this::toDTO).collect(Collectors.toList());
         } else {
             return personService.findByNameOrCityContaining(search, 0, 10)
@@ -27,18 +25,18 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public PersonDTO get(@PathVariable String id){
+    public PersonDTO get(@PathVariable String id) {
         return toDTO(personService.get(id));
 
     }
 
     @PostMapping
-    public PersonDTO createPerson (@RequestBody CreatePerson createPerson){
+    public PersonDTO createPerson(@RequestBody CreatePerson createPerson) {
         return toDTO(personService.createPerson(createPerson));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonDTO> updatePerson(@PathVariable String id, @RequestBody UpdatePerson updatePerson){
+    public ResponseEntity<PersonDTO> updatePerson(@PathVariable String id, @RequestBody UpdatePerson updatePerson) {
         try {
             return ResponseEntity.ok(toDTO(personService
                     .updatePerson(id, updatePerson.getName(), updatePerson.getAge(), updatePerson.getCity())));
@@ -48,12 +46,12 @@ public class PersonController {
     }
 
     @DeleteMapping("/{id}")
-    public void deletePerson(@PathVariable String id){
+    public void deletePerson(@PathVariable String id) {
         personService.deletePerson(id);
     }
 
     @PutMapping("/{id}/addGroup/{groupName}")
-    public ResponseEntity<PersonDTO> addGroup(@PathVariable String id, @PathVariable String groupName){
+    public ResponseEntity<PersonDTO> addGroup(@PathVariable String id, @PathVariable String groupName) {
         try {
             return ResponseEntity.ok(toDTO(personService.addGroup(id, groupName)));
         } catch (PersonNotFoundException e) {
@@ -62,7 +60,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{id}/removeGroup/{groupId}")
-    public ResponseEntity<PersonDTO> removeGroup(@PathVariable String id, @PathVariable String groupId){
+    public ResponseEntity<PersonDTO> removeGroup(@PathVariable String id, @PathVariable String groupId) {
         try {
             return ResponseEntity.ok(toDTO(personService.removeGroup(id, groupId)));
         } catch (PersonNotFoundException e) {
@@ -83,5 +81,4 @@ public class PersonController {
                         .collect(Collectors.toList())
         );
     }
-
 }
