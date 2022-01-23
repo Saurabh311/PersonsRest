@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Service
@@ -27,9 +28,9 @@ public class PersonService {
         return personRepository.findAll();
     }
 
-    public Person get(String id) throws PersonNotFoundException{
+    public Person get(String id) {
         return personRepository.findById(id)
-                .orElseThrow(()-> new PersonNotFoundException(id));
+                .orElse(new PersonImpl());
     }
 
     public Person createPerson(CreatePerson createPerson) {
@@ -57,7 +58,6 @@ public class PersonService {
         Person person = personRepository.findById(id)
                 .orElseThrow(()-> new PersonNotFoundException(id));
         String name = groupRemote.createGroup(groupName);
-        System.out.println(name);
         System.out.println(groupName + " from Service");
         person.addGroup(name);
         return personRepository.save(person);
@@ -74,12 +74,19 @@ public class PersonService {
         return groupName;
     }
 
-    public Person removeGroup(String personId, String groupId)throws PersonNotFoundException{
-        Person person = personRepository.findById(personId)
-                .orElseThrow(()-> new PersonNotFoundException(groupId));
-        person.removeGroup(groupId);
-        return personRepository.save(person);
+    public Person removeGroup(String personId, String groupName)throws PersonNotFoundException{
+        return personRepository.findById(personId).map(person -> {
+            if (isUUID(groupName)) person.removeGroup(groupName);
+            else person.getGroups().removeIf(group -> groupRemote.getNameById(group).equalsIgnoreCase(groupName));
+            return personRepository.save(person);
+        }).orElse(null);
     }
+
+    private boolean isUUID(String groupName) {
+        String uuidRegex = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+        return Pattern.compile(uuidRegex).matcher(groupName).matches();
+    }
+
 
     public Page<Person> findByNameOrCityContaining(String search, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);

@@ -27,12 +27,9 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonDTO> get(@PathVariable String id){
-        try {
-            return ResponseEntity.ok(toDTO(personService.get(id)));
-        } catch (PersonNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public PersonDTO get(@PathVariable String id){
+        return toDTO(personService.get(id));
+
     }
 
     @PostMapping
@@ -74,12 +71,17 @@ public class PersonController {
     }
 
     private PersonDTO toDTO(Person person) {
+        System.out.println(person.getGroups() + "  groups From Controller");
+        System.out.println(person.getId() + "  ID From Controller");
         return new PersonDTO(
                 person.getId(),
                 person.getName(),
                 person.getCity(),
                 person.getAge(),
-                person.getGroups());
+                person.getGroups().stream()
+                        .map(groupId -> personService.getGroupName(groupId))
+                        .collect(Collectors.toList())
+        );
     }
 
 }
