@@ -1,4 +1,4 @@
-package com.example.personsrest.remote;
+package com.example.personsrest.jwt;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

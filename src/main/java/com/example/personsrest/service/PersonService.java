@@ -1,5 +1,10 @@
-package com.example.personsrest.domain;
+package com.example.personsrest.service;
 
+import com.example.personsrest.domain.CreatePerson;
+import com.example.personsrest.domain.Person;
+import com.example.personsrest.domain.PersonImpl;
+import com.example.personsrest.exception.PersonNotFoundException;
+import com.example.personsrest.domain.PersonRepository;
 import com.example.personsrest.remote.GroupRemote;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

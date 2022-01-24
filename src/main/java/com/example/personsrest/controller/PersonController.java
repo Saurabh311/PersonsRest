@@ -1,5 +1,11 @@
-package com.example.personsrest.domain;
+package com.example.personsrest.controller;
 
+import com.example.personsrest.exception.PersonNotFoundException;
+import com.example.personsrest.service.PersonService;
+import com.example.personsrest.domain.CreatePerson;
+import com.example.personsrest.domain.Person;
+import com.example.personsrest.domain.PersonDTO;
+import com.example.personsrest.domain.UpdatePerson;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,8 +75,6 @@ public class PersonController {
     }
 
     private PersonDTO toDTO(Person person) {
-        System.out.println(person.getGroups() + "  groups From Controller");
-        System.out.println(person.getId() + "  ID From Controller");
         return new PersonDTO(
                 person.getId(),
                 person.getName(),

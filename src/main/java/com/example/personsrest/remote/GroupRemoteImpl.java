@@ -1,5 +1,6 @@
 package com.example.personsrest.remote;
 
+import com.example.personsrest.jwt.KeyCloakToken;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
